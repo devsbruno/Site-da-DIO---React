@@ -8,6 +8,8 @@ import { Button } from "../../components/Button";
 import { Header } from "../../components/Header";
 import { Input } from "../../components/Input";
 
+import { api } from "../../services/api";
+
 import {
   Column,
   ErrorText,
@@ -23,8 +25,14 @@ import {
 
 const schema = yup
   .object({
-    email: yup.string().email("E-mail não é válido").required("Campo Obrigatório"),
-    password: yup.string().min(3, "No minimo 3 caracteres").required("Campo Obrigatório"),
+    email: yup
+      .string()
+      .email("E-mail não é válido")
+      .required("Campo Obrigatório"),
+    password: yup
+      .string()
+      .min(3, "No minimo 3 caracteres")
+      .required("Campo Obrigatório"),
   })
   .required();
 
@@ -40,12 +48,19 @@ const Login = () => {
     mode: "onChange",
   });
 
-  console.log(isValid, errors);
-
-  const onSubmit = (data) => console.log(data);
-
-  const handleClickSignIn = () => {
-    navigate("/feed");
+  const onSubmit = async formData => {
+    try {
+      const { data } = await api.get(
+        `users?email=${formData.email}&senha=${formData.password}`
+      );
+      if (data.length === 1) {
+        navigate("/feed");
+      } else {
+        alert("Email ou senha inválido");
+      }
+    } catch {
+      alert("Houve um erro, tente novamente!");
+    }
   };
 
   return (
