@@ -12,7 +12,6 @@ import { api } from "../../services/api";
 
 import {
   Column,
-  ErrorText,
   Container,
   CriarText,
   EsqueciText,
@@ -22,6 +21,7 @@ import {
   TitleLogin,
   Wrapper,
 } from "./styles";
+import { IFormData } from "./types";
 
 const schema = yup
   .object({
@@ -43,12 +43,12 @@ const Login = () => {
     control,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm({
+  } = useForm<IFormData>({
     resolver: yupResolver(schema),
     mode: "onChange",
   });
 
-  const onSubmit = async formData => {
+  const onSubmit = async (formData: IFormData) => {
     try {
       const { data } = await api.get(
         `users?email=${formData.email}&senha=${formData.password}`
